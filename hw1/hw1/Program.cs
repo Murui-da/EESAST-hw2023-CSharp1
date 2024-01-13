@@ -11,7 +11,7 @@ namespace Homework1
             {
                 try
                 {
-                    progress.Start(i*((i%2==0)?1:-1));
+                    progress.Start(i * ((i % 2 == 0) ? 1 : -1));
                 }
                 catch (Exception e)
                 {
@@ -19,9 +19,9 @@ namespace Homework1
                 }
                 if (i % 3 != 0)
                 {
-                    progress.Add(i-1);
+                    progress.Add(i - 1);
                 }
-                else progress.Sub(i-1);
+                else progress.Sub(i - 1);
 
                 if (i == 6 || i == 7)
                 {
@@ -43,8 +43,8 @@ namespace Homework1
         /// 如果之前进度条已经加载完成，则将进度清零开始下一次加载，返回true，但如果requiredProgress<0，应当报错
         /// 如果之前进度条尚未加载完成，返回false
         /// </summary>
-        public bool Start(int requiredProgress); 
-        
+        public bool Start(int requiredProgress);
+
         public void Add(int addProgress); //增加addProgress的进度
         public void Sub(int subProgress); //减少subProgress的进度
         public void Double(); //进度翻倍
@@ -60,33 +60,89 @@ namespace Homework1
         // 一个进度条
         // 只允许修改Progress类中的代码
         // 要求实现IProgress中的要求
+
+        private static int progressIndex = 0;
+        private int num;
+        private int requiredProgress;
+        private int finishedProgress;
+
+        public Progress()
+        {
+            num = ++progressIndex;
+            requiredProgress = 0;
+            finishedProgress = 0;
+        }
+
+        public int Num { get => num; }
+
+        public int RequiredProgress { get => requiredProgress; }
+
+        public int FinishedProgress { get => finishedProgress; }
+
+        public bool Start(int requiredProgress)
+        {
+            if (requiredProgress < 0)
+            {
+                throw new ArgumentException("RequiredProgress must be positive.", nameof(requiredProgress));
+            }
+            if (finishedProgress == this.requiredProgress)
+            {
+                finishedProgress = 0;
+                this.requiredProgress = requiredProgress;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void Add(int addProgress)
+        {
+            finishedProgress += addProgress;
+            finishedProgress = finishedProgress > requiredProgress ? requiredProgress : finishedProgress;
+        }
+
+        public void Sub(int subProgress)
+        {
+            finishedProgress -= subProgress;
+            finishedProgress = finishedProgress < 0 ? 0 : finishedProgress;
+        }
+
+        public void Double()
+        {
+            finishedProgress *= 2;
+            finishedProgress = finishedProgress > requiredProgress ? requiredProgress : finishedProgress;
+        }
+
+        public (int FinishedProgress, int RequiredProgress) GetProgress() => (finishedProgress, requiredProgress);
     }
 
-/*
- * 输出示例：
-RequiredProgress must be positive. (Parameter 'Homework1.Progress')
-(0, 0)
-(1, 2)
-(0, 2)
-(2, 2)
-RequiredProgress must be positive. (Parameter 'Homework1.Progress')
-(2, 2)
-(0, 6)
-(6, 6)
-(7, 8)
-(0, 8)
-(8, 8)
-RequiredProgress must be positive. (Parameter 'Homework1.Progress')
-(8, 8)
-(0, 12)
-(12, 12)
-(13, 14)
-(0, 14)
-(14, 14)
-RequiredProgress must be positive. (Parameter 'Homework1.Progress')
-(14, 14)
-(0, 18)
-(18, 18)
-(19, 20)
- */
+    /*
+     * 输出示例：
+    RequiredProgress must be positive. (Parameter 'Homework1.Progress')
+    (0, 0)
+    (1, 2)
+    (0, 2)
+    (2, 2)
+    RequiredProgress must be positive. (Parameter 'Homework1.Progress')
+    (2, 2)
+    (0, 6)
+    (6, 6)
+    (7, 8)
+    (0, 8)
+    (8, 8)
+    RequiredProgress must be positive. (Parameter 'Homework1.Progress')
+    (8, 8)
+    (0, 12)
+    (12, 12)
+    (13, 14)
+    (0, 14)
+    (14, 14)
+    RequiredProgress must be positive. (Parameter 'Homework1.Progress')
+    (14, 14)
+    (0, 18)
+    (18, 18)
+    (19, 20)
+     */
 }
